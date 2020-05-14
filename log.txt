@@ -1,5 +1,0 @@
-[qSkipTool]2020/04/28 09:11:46 main.go:22: open out.json: no such file or directory
-[qSkipTool]2020/04/28 09:12:07 main.go:22: open out.json: no such file or directory
-[qSkipTool]2020/04/28 09:12:15 main.go:22: open out.json: no such file or directory
-[qSkipTool]2020/04/28 09:20:51 main.go:30: unexpected end of JSON input
-[qSkipTool]2020/04/28 09:22:52 main.go:30: unexpected end of JSON input
