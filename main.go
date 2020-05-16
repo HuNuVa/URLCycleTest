@@ -1,13 +1,13 @@
 package main
 
 import (
-	"URLCycleTest/dingMsg"
-	_ "URLCycleTest/logout"
-	"URLCycleTest/point"
-	"fmt"
-	"io/ioutil"
-	"log"
-	"os"
+"URLCycleTest/dingMsg"
+_ "URLCycleTest/logout"
+"URLCycleTest/point"
+"fmt"
+"io/ioutil"
+"log"
+"os"
 )
 
 func main() {
@@ -20,8 +20,8 @@ func main() {
 	if !point.Exists("out.json") {
 		_,err := os.Create("out.json")
 		if err != nil {
-		    log.Print(err)
-		    return
+			log.Print(err)
+			return
 		}
 	}
 
@@ -51,9 +51,9 @@ func main() {
 	}
 
 	defer newSp.JsonOut()
-	defer os.Remove("./result.txt")
 
-    //输出到result.txt
+
+	//输出到result.txt
 	fmt.Println("===============检查开始=================")
 	fmt.Println("\n---------------以下为各页面减少连接--------------")
 	newSp.SliContrast(oldSp)
@@ -69,4 +69,11 @@ func main() {
 		return
 	}
 	dingMsg.SendDingMsg(string(bytes))
+
+	f.Close()
+
+	err = os.Remove("./result.txt")
+	if err !=nil {
+		log.Println(err)
+	}
 }
