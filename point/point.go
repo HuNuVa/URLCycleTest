@@ -12,14 +12,14 @@ import (
 	"strings"
 )
 
-type point struct {
+type Point struct {
 	Name 		string
 	Url			string
 	Link 		[]string
 }
 
 //提供一个方法,提供point
-func Newpoint(name string,u string) *point {
+func Newpoint(name string,u string) *Point {
 
 	scode,err := getSourceCode(u)
 	if err != nil {
@@ -31,7 +31,7 @@ func Newpoint(name string,u string) *point {
 
 
 
-	return &point{ //创建实例
+	return &Point{ //创建实例
 
 		Name:	name,
 		Url:	u,
@@ -40,7 +40,7 @@ func Newpoint(name string,u string) *point {
 }
 
 //提供一个方法,传入一个[]string,point对象循环用[]string中的参数循环对比是否有重复
-func (p point) DiffLink (s []string) []string {
+func (p Point) DiffLink (s []string) []string {
 	var v []string
 	var linkStr	string
 	for _,str := range p.Link {
@@ -59,7 +59,7 @@ func (p point) DiffLink (s []string) []string {
 
 
 
-type Slipoint []point
+type Slipoint []Point
 //获取新point切片
 func Newspoint() Slipoint {
 	var pointSlice Slipoint

@@ -11,10 +11,13 @@ func (a Slipoint) SliContrast(b Slipoint) {
 	for _,pb := range b{
 		for _,pa := range a{
 			if pa.Url == pb.Url{
-				fmt.Println(pa.Name+":"+pa.Url)
 
 				for _,v := range pa.DiffLink(pb.Link){
-					fmt.Println(v)
+					if v != "" {
+						fmt.Println(pa.Name+":"+pa.Url+"---------")
+						fmt.Println(v)
+					}
+
 				}
 
 			}
