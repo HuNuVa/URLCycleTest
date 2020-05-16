@@ -1,9 +1,11 @@
 package main
 
 import (
+	"URLCycleTest/dingMsg"
 	_ "URLCycleTest/logout"
 	"URLCycleTest/point"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 )
@@ -45,19 +47,26 @@ func main() {
 			c <- point.Newpoint(v.Name,v.Url)
 		}()
 		a := <- c
-
 		newSp = append(newSp, *a)
 	}
 
 	defer newSp.JsonOut()
+	defer os.Remove("./result.txt")
 
-
-	fmt.Println("\n\n\n================================检查开始===================================")
-	fmt.Println("\n---------------------以下为各页面减少连接---------------")
+    //输出到result.txt
+	fmt.Println("===============检查开始=================")
+	fmt.Println("\n---------------以下为各页面减少连接--------------")
 	newSp.SliContrast(oldSp)
-	fmt.Println()
-	fmt.Println("\n+++++++++++++++++++++以下为各页面新增连接+++++++++++++++")
+	fmt.Println("\n+++++++++++以下为各页面新增连接++++++++++")
 	oldSp.SliContrast(newSp)
-	fmt.Println("\n================================检查结束===================================")
+	fmt.Println("\n===============检查结束=================")
 
+
+	//输出到钉钉
+	bytes, err := ioutil.ReadFile("./result.txt")
+	if err != nil {
+		fmt.Println("error : %s", err)
+		return
+	}
+	dingMsg.SendDingMsg(string(bytes))
 }
