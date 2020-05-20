@@ -57,8 +57,6 @@ func (p Point) DiffLink (s []string) []string {
 }
 
 
-
-
 type Slipoint []Point
 //获取新point切片
 func Newspoint() Slipoint {

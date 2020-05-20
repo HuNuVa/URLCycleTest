@@ -1,13 +1,14 @@
 package main
 
 import (
-"URLCycleTest/dingMsg"
-_ "URLCycleTest/logout"
-"URLCycleTest/point"
-"fmt"
-"io/ioutil"
-"log"
-"os"
+	"URLCycleTest/dingMsg"
+	_ "URLCycleTest/logout"
+	"URLCycleTest/point"
+	"fmt"
+	_ "io/ioutil"
+	"log"
+	"os"
+	"time"
 )
 
 func main() {
@@ -24,6 +25,8 @@ func main() {
 			return
 		}
 	}
+	//输出时间
+	fmt.Println("\n"+"执行时间:  ",time.Now().Format("2006-01-02 15:04:05"))
 
 	//定义一个结构体切片,用来导入json文件中的记录
 	oldSp := point.Newspoint()
@@ -56,24 +59,66 @@ func main() {
 	//输出到result.txt
 	fmt.Println("===============检查开始=================")
 	fmt.Println("\n---------------以下为各页面减少连接--------------")
-	newSp.SliContrast(oldSp)
+	snew := newSp.SliContrast(oldSp)
 	fmt.Println("\n+++++++++++以下为各页面新增连接++++++++++")
-	oldSp.SliContrast(newSp)
+	sold := oldSp.SliContrast(newSp)
 	fmt.Println("\n===============检查结束=================")
 
-
-	//输出到钉钉
-	bytes, err := ioutil.ReadFile("./result.txt")
-	if err != nil {
-		fmt.Println("error : %s", err)
-		return
+	//将内容拼接位字符串,发送给钉钉
+	strs := "执行时间:  " + time.Now().Format("2006-01-02 15:04:05")+
+		"\n===============检查开始\n" +
+		"-------以下为各页面减少连接\n"
+	for _,v := range snew {
+		strs = strs + "-" + v + "\n"
 	}
-	dingMsg.SendDingMsg(string(bytes))
+	strs = strs + "+++++以下为各页面新增连接\n"
+	for _,v := range sold {
+		strs = strs + "+"  + v + "\n"
+	}
+	strs = strs + "===============检查结束"
+
+	dingMsg.SendDingMsg(strs)
+
+
+
+	/*
+	//将要发送给钉钉的消息写入一个临时文件
+	ftmp,err := os.Create("./.tmp")
+	if err != nil {
+		log.Println("创建临时文件失败(./.tmp)")
+	} else {
+		_, _ = ftmp.WriteString("===============检查开始\n" +
+			"-------以下为各页面减少连接\n")
+		for _,v := range snew {
+			_, _ = ftmp.WriteString(v+"\n")
+		}
+		_, _ = ftmp.WriteString("+++++以下为各页面新增连接\n")
+		for _,v := range sold {
+			_, _ = ftmp.WriteString(v+"\n")
+		}
+		_, _ = ftmp.WriteString("===============检查结束")
+
+		err = ftmp.Close()
+		if err != nil {
+			log.Println("关闭临时文件(./tmp出错:)",err)
+		}
+
+		//输出到钉钉
+		bytes, err := ioutil.ReadFile("./.tmp")
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		dingMsg.SendDingMsg(string(bytes))
+
+		err = os.Remove("./.tmp")
+		if err !=nil {
+			log.Println(err)
+		}
+	}
+
+	 */
+
 
 	f.Close()
-
-	err = os.Remove("./result.txt")
-	if err !=nil {
-		log.Println(err)
-	}
 }
