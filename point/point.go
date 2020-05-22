@@ -67,7 +67,7 @@ func getSourceCode(url string) (string, error) {
 	client := &http.Client{}
 
 	//生成要访问的url
-	url = "https://" + url
+	url = "http://" + url
 
 	//输出当前时间
 	//log.Println(url+"  Test start------")
@@ -134,6 +134,14 @@ func getLink(u string, s string) ([]string, error) {
 
 //将连接信息导出为json,方便持久保存
 func (a Slipoint) JsonOut() {
+
+	if Exists("out.json") {
+		_, err := os.Create("out.json")
+		if err != nil {
+			log.Print(err)
+			return
+		}
+	}
 
 	b, err := json.Marshal(a)
 	if err != nil {

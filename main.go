@@ -1,7 +1,6 @@
 package main
 
 import (
-	"URLCycleTest/dingMsg"
 	_ "URLCycleTest/logout"
 	"URLCycleTest/point"
 	"fmt"
@@ -17,20 +16,11 @@ func main() {
 	os.Stdout = f
 
 	os.Stderr = f
+	defer f.Close()
 
-	if !point.Exists("out.json") {
-		_, err := os.Create("out.json")
-		if err != nil {
-			log.Print(err)
-			return
-		}
-	}
 	//输出时间
 	fmt.Println("\n"+"执行时间:  ", time.Now().Format("2006-01-02 15:04:05"))
 
-	//定义一个结构体切片,用来导入json文件中的记录
-	oldSp := point.Newspoint()
-	oldSp, _ = oldSp.JsonIn()
 	//if err != nil {
 	//	log.Println(err)
 	//	return
@@ -42,6 +32,7 @@ func main() {
 	newSp := point.Newspoint()
 	//fmt.Println("conf元素个数:", + len(conf))
 	//fmt.Println(conf)
+
 	//定义一个管道,用来保存协程传递过来的 point,长度为conf.json中定义的对象个数
 	c := make(chan *point.Point, len(conf))
 	for _, v := range conf {
@@ -52,6 +43,18 @@ func main() {
 		a := <-c
 		newSp = append(newSp, *a)
 	}
+
+	//检查是否已创建out.json，如未创建，退出
+	_, err := os.Stat("./out.json")
+	if err != nil {
+		log.Println("out.json文件不存在，已创建，并将本次结果导入")
+		newSp.JsonOut()
+		return
+	}
+
+	//定义一个结构体切片,用来导入json文件中的记录
+	oldSp := point.Newspoint()
+	oldSp, _ = oldSp.JsonIn()
 
 	defer newSp.JsonOut()
 
@@ -66,17 +69,13 @@ func main() {
 	//将内容拼接位字符串,发送给钉钉
 	strs := "执行时间:  " + time.Now().Format("2006-01-02 15:04:05") +
 		"\n===============检查开始\n" +
-		"-------以下为各页面减少连接\n"
-	for _, v := range snew {
-		strs = strs + "-" + v + "\n"
-	}
-	strs = strs + "+++++以下为各页面新增连接\n"
-	for _, v := range sold {
-		strs = strs + "+" + v + "\n"
-	}
+		"-------以下为各页面减少连接" +
+		snew+"\n"
+	strs = strs + "+++++以下为各页面新增连接" +
+		sold+"\n"
 	strs = strs + "===============检查结束"
 
-	dingMsg.SendDingMsg(strs)
+	//dingMsg.SendDingMsg(strs)
 
 	/*
 		//将要发送给钉钉的消息写入一个临时文件
@@ -116,5 +115,5 @@ func main() {
 
 	*/
 
-	_ = f.Close()
+
 }
