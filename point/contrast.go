@@ -10,16 +10,19 @@ func (a Slipoint) SliContrast(b Slipoint) []string {
 
 	var s []string
 
-	for _,pb := range b{
-		for _,pa := range a{
-			if pa.Url == pb.Url{
+	for _, pb := range b {
+		for _, pa := range a {
+			if pa.Url == pb.Url {
 
-				for _,v := range pa.DiffLink(pb.Link){
+				if len(pa.Link) < len(pb.Link) {
+					fmt.Println(pa.Name, ":", pa.Url)
+					s = append(s, pa.Name+":"+pa.Url)
+				}
+
+				for _, v := range pa.DiffLink(pb.Link) {
 					if v != "" {
-						fmt.Println(pa.Name,":",pa.Url)
-						fmt.Println("\t",v)
-						s = append(s,pa.Name+":"+pa.Url)
-						s = append(s,"\n"+v)
+						fmt.Println("\t", v)
+						s = append(s, "\n"+v)
 					}
 
 				}

@@ -1,4 +1,5 @@
 package dingMsg
+
 import (
 	"fmt"
 	"net/http"
@@ -11,7 +12,7 @@ func SendDingMsg(msg string) {
 	content := `{
 					"msgtype": "text",
 					"text": {
-								"content": "`+msg+`"
+								"content": "` + msg + `"
 							},
 					"at": {
 						"isAtAll": true

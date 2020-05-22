@@ -13,42 +13,39 @@ import (
 )
 
 type Point struct {
-	Name 		string
-	Url			string
-	Link 		[]string
+	Name string
+	Url  string
+	Link []string
 }
 
 //提供一个方法,提供point
-func Newpoint(name string,u string) *Point {
+func Newpoint(name string, u string) *Point {
 
-	scode,err := getSourceCode(u)
+	scode, err := getSourceCode(u)
 	if err != nil {
 		log.Println("源代码未成功获取")
 		panic(err)
 	}
 
-	sl ,_ := getLink(u,scode)
-
-
+	sl, _ := getLink(u, scode)
 
 	return &Point{ //创建实例
 
-		Name:	name,
-		Url:	u,
-		Link:	sl,
+		Name: name,
+		Url:  u,
+		Link: sl,
 	}
 }
 
 //提供一个方法,传入一个[]string,point对象循环用[]string中的参数循环对比是否有重复
-func (p Point) DiffLink (s []string) []string {
+func (p Point) DiffLink(s []string) []string {
 	var v []string
-	var linkStr	string
-	for _,str := range p.Link {
+	var linkStr string
+	for _, str := range p.Link {
 		linkStr = linkStr + str + "\n"
 	}
 
-
-	for _,str := range s {
+	for _, str := range s {
 		if !strings.Contains(linkStr, str) {
 			v = append(v, str)
 		}
@@ -56,8 +53,8 @@ func (p Point) DiffLink (s []string) []string {
 	return v
 }
 
-
 type Slipoint []Point
+
 //获取新point切片
 func Newspoint() Slipoint {
 	var pointSlice Slipoint
@@ -65,12 +62,12 @@ func Newspoint() Slipoint {
 }
 
 //定义方法,取得页面源代码
-func  getSourceCode (url string) (string,error) {
+func getSourceCode(url string) (string, error) {
 	//生成client 参数为默认
 	client := &http.Client{}
 
 	//生成要访问的url
-	url = "https://"+url
+	url = "https://" + url
 
 	//输出当前时间
 	//log.Println(url+"  Test start------")
@@ -82,24 +79,23 @@ func  getSourceCode (url string) (string,error) {
 		log.Println(err)
 		state := "请求创建失败"
 		log.Println(state)
-		return "",err
+		return "", err
 	}
-
 
 	//处理返回结果
 	response, err := client.Do(request)
 	if err != nil {
-		log.Println("服务器未成功响应: "+url)
-		return "",err
+		log.Println("服务器未成功响应: " + url)
+		return "", err
 	}
 
 	//返回的状态码
 	status := response.StatusCode
 
 	if status > 400 {
-		state := url+" : 状态码大于400,请检查url是否可用"
+		state := url + " : 状态码大于400,请检查url是否可用"
 		log.Println(state)
-		return "",err
+		return "", err
 	}
 
 	//将源代码存入变量
@@ -108,10 +104,10 @@ func  getSourceCode (url string) (string,error) {
 	_, _ = buf.ReadFrom(body)
 	scode := buf.String()
 
-	return scode,nil
+	return scode, nil
 }
 
-func getLink(u string,s string) ([]string,error) {
+func getLink(u string, s string) ([]string, error) {
 
 	//创建切片,获取所有匹配到的链接
 	var link []string
@@ -124,7 +120,7 @@ func getLink(u string,s string) ([]string,error) {
 		for _, v := range dataSlice {
 			if !strings.Contains(string(v), "http") {
 				//fmt.Println(u + "/" + string(v))
-				link = append(link, u + "/" + string(v))
+				link = append(link, u+"/"+string(v))
 			} else {
 				//fmt.Println(string(v))
 				link = append(link, string(v))
@@ -133,13 +129,13 @@ func getLink(u string,s string) ([]string,error) {
 		}
 	}
 
-	return link,nil
+	return link, nil
 }
 
 //将连接信息导出为json,方便持久保存
 func (a Slipoint) JsonOut() {
 
-	b,err := json.Marshal(a)
+	b, err := json.Marshal(a)
 	if err != nil {
 		log.Println("json数据转化失败")
 	}
@@ -147,8 +143,8 @@ func (a Slipoint) JsonOut() {
 
 	//创建json文件,保存旧数据
 	fileName := "out.json"
-	dstFile,err := os.Create(fileName)
-	if err!=nil{
+	dstFile, err := os.Create(fileName)
+	if err != nil {
 		log.Println("创建json文件失败")
 		return
 	}
@@ -164,18 +160,18 @@ func (a Slipoint) JsonIn() (Slipoint, error) {
 	}
 	defer f.Close()
 	conf, err := ioutil.ReadAll(f)
-	if err !=nil {
-		return nil,err
+	if err != nil {
+		return nil, err
 	}
 	err = json.Unmarshal(conf, &a)
-	if err !=nil {
-		return nil,err
+	if err != nil {
+		return nil, err
 	}
-	return a,nil
+	return a, nil
 }
 
 //从conf.json中提取配置文件
-func (s Slipoint)SliInit() Slipoint {
+func (s Slipoint) SliInit() Slipoint {
 	var Conf Slipoint
 	f, err := os.Open("conf.json")
 	if err != nil {
@@ -183,11 +179,11 @@ func (s Slipoint)SliInit() Slipoint {
 	}
 	defer f.Close()
 	conf, err := ioutil.ReadAll(f)
-	if err !=nil {
+	if err != nil {
 		panic(err)
 	}
 	err = json.Unmarshal(conf, &Conf)
-	if err !=nil {
+	if err != nil {
 		panic(err)
 	}
 	return Conf
@@ -195,7 +191,7 @@ func (s Slipoint)SliInit() Slipoint {
 
 //判断文件是否存在
 func Exists(path string) bool {
-	_, err := os.Stat(path)    //os.Stat获取文件信息
+	_, err := os.Stat(path) //os.Stat获取文件信息
 	if err != nil {
 		if os.IsExist(err) {
 			return true
