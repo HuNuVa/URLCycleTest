@@ -14,7 +14,7 @@ func (a Slipoint) SliContrast(b Slipoint) []string {
 		for _, pa := range a {
 			if pa.Url == pb.Url {
 
-				if len(pa.Link) < len(pb.Link) {
+				if len(pa.Link) > len(pb.Link) {
 					fmt.Println(pa.Name, ":", pa.Url)
 					s = append(s, pa.Name+":"+pa.Url)
 				}
