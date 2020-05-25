@@ -114,13 +114,22 @@ func getLink(u string, s string) ([]string, error) {
 
 	//创建正则表达式
 	reg := regexp.MustCompile("(http://|https://|art/|col/)(.*?)(\"|html|htm)")
+
+	//筛选以art和col开头的相对地址链接，当原连接没有
+	reg2 := regexp.MustCompile("(.*?)(/)")
 	if strings.Contains(s, ".html") {
 		//fmt.Println("检查到html连接")
 		dataSlice := reg.FindAll([]byte(s), -1)
 		for _, v := range dataSlice {
 			if !strings.Contains(string(v), "http") {
 				//fmt.Println(u + "/" + string(v))
-				link = append(link, u+"/"+string(v))
+				reg2Str := reg2.FindString(u)
+				if reg2Str == "" {
+					link = append(link, u+"/"+string(v))
+				} else {
+					link = append(link, reg2Str + string(v))
+				}
+
 			} else {
 				//fmt.Println(string(v))
 				link = append(link, string(v))
