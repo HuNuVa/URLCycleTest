@@ -93,7 +93,7 @@ func getSourceCode(url string) (string, error) {
 	status := response.StatusCode
 
 	if status > 400 {
-		state := url + " : 状态码大于400,请检查url是否可用"
+		state := url + " : 状态码："+status
 		log.Println(state)
 		return "", err
 	}
